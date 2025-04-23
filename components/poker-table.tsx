@@ -18,6 +18,7 @@ import ChipAnimation from "./chip-animation"
 import WinnerDisplay from "./winner-display"
 import { ChevronLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import HandStrengthDialog from "./hand-strength-dialog"
 
 export default function PokerTable() {
   const router = useRouter()
@@ -47,6 +48,7 @@ export default function PokerTable() {
   const winSoundRef = useRef<HTMLAudioElement | null>(null)
   const foldSoundRef = useRef<HTMLAudioElement | null>(null)
   const checkSoundRef = useRef<HTMLAudioElement | null>(null)
+  const [showHandStrength, setShowHandStrength] = useState(false)
 
   // Initialize audio elements
   useEffect(() => {
@@ -538,6 +540,14 @@ export default function PokerTable() {
     setShowRecommendation(!showRecommendation)
   }
 
+  const handleOpenHandStrength = () => {
+    setShowHandStrength(true)
+  }
+
+  const handleCloseHandStrength = () => {
+    setShowHandStrength(false)
+  }
+
   if (isLoading || !gameState || !gameSettings) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-900">
@@ -589,10 +599,21 @@ export default function PokerTable() {
     <div className="relative h-screen w-full overflow-hidden bg-gray-900 text-white">
       {/* Header with back button and game info */}
       <div className="absolute top-0 left-0 right-0 p-4 z-10 flex justify-between items-center">
-        <Button variant="ghost" size="sm" onClick={returnToLobby} className="text-white hover:bg-gray-800">
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back to Lobby
-        </Button>
+        <div className="flex flex-col items-start gap-2">
+          <Button variant="ghost" size="sm" onClick={returnToLobby} className="text-white hover:bg-gray-800">
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back to Lobby
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleOpenHandStrength}
+            className="ml-6 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+          >
+            Show Hand Strength
+          </Button>
+        </div>
 
         <div className="flex items-center gap-4">
           <div className="bg-gray-800 px-4 py-1 rounded-full text-sm">Small Blind: ${gameState.smallBlindAmount}</div>
@@ -692,34 +713,30 @@ export default function PokerTable() {
         <WinnerDisplay winners={gameState.winners} onNewGame={startNewGame} />
       )}
 
-<AnimatePresence>
-  {gameState.currentPlayerIndex === 0 &&
-    !gameState.gameOver &&
-    !gameState.players[0].folded &&
-    !gameState.players[0].isAllIn &&
-    gameState.players[0].isActive && (
-    <motion.div
-      className="absolute bottom-4 left-8 flex flex-row items-end justify-start space-x-6"
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: 100, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-    >
-      {recommendation && showRecommendation && (
-        <div className="w-[400px] max-w-sm">
-          <RecommendationPanel recommendation={recommendation} />
-        </div>
-      )}
-      <div className="w-[300px] max-w-sm">
-        <ActionControls
-          validActions={getValidActions(gameState)}
-          onAction={handleAction}
-        />
-      </div>
-    </motion.div>
-    )}
-</AnimatePresence>
-
+      <AnimatePresence>
+        {gameState.currentPlayerIndex === 0 &&
+          !gameState.gameOver &&
+          !gameState.players[0].folded &&
+          !gameState.players[0].isAllIn &&
+          gameState.players[0].isActive && (
+            <motion.div
+              className="absolute bottom-4 left-8 flex flex-row items-end justify-start space-x-6"
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              {recommendation && showRecommendation && (
+                <div className="w-[400px] max-w-sm">
+                  <RecommendationPanel recommendation={recommendation} />
+                </div>
+              )}
+              <div className="w-[300px] max-w-sm">
+                <ActionControls validActions={getValidActions(gameState)} onAction={handleAction} />
+              </div>
+            </motion.div>
+          )}
+      </AnimatePresence>
 
       {/* Toggle recommendation button */}
       <div className="absolute right-4 top-20">
@@ -732,6 +749,9 @@ export default function PokerTable() {
           {showRecommendation ? "Hide Advice" : "Show Advice"}
         </Button>
       </div>
+
+      {/* Hand Strength Dialog */}
+      <HandStrengthDialog isOpen={showHandStrength} onClose={handleCloseHandStrength} />
     </div>
   )
 }

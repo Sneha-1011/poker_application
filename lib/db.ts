@@ -5,7 +5,7 @@ const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "localhost",
   user: process.env.MYSQL_USER || "root",
   password: process.env.MYSQL_PASSWORD || "Sneha@.03",
-  database: process.env.MYSQL_DATABASE || "poker_game",
+  database: process.env.MYSQL_DATABASE || "pokergamedb",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -41,7 +41,6 @@ export async function initDatabase() {
       CREATE TABLE IF NOT EXISTS games (
         id INT AUTO_INCREMENT PRIMARY KEY,
         start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        end_time TIMESTAMP NULL,
         winner_id INT,
         pot_size INT,
         player_count INT,
@@ -78,9 +77,8 @@ export async function initDatabase() {
     `)
 
     console.log("Database initialized successfully")
-    return { success: true, message: "Database initialized successfully" }
   } catch (error) {
     console.error("Failed to initialize database:", error)
-    return { success: false, message: "Failed to initialize database: " + (error as Error).message }
+    throw error
   }
 }

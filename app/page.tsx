@@ -32,7 +32,6 @@ export default function LobbyPage() {
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].id)
 
   const handleStartGame = () => {
-    // Generate random guest name if username is blank
     const finalUsername = username.trim() || `Guest${Math.floor(Math.random() * 10000)}`
 
     // Store game settings in localStorage
@@ -45,8 +44,6 @@ export default function LobbyPage() {
         aiAvatars: AI_AVATARS.slice(0, aiPlayerCount).map((avatar) => avatar.id),
       }),
     )
-
-    // Navigate to the game page
     router.push("/game")
   }
 
@@ -112,7 +109,7 @@ export default function LobbyPage() {
                     <RadioGroupItem value={avatar.id} id={avatar.id} className="sr-only" />
                   </div>
                   <Label htmlFor={avatar.id} className="text-gray-300 cursor-pointer">
-                    {avatar.id === "avatar1" ? "Player 1" : "Player 2"}
+                    {avatar.id === "avatar1" ? "Icon" : "Icon"}
                   </Label>
                 </div>
               ))}
