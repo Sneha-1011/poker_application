@@ -17,8 +17,8 @@
 
 <h2>🛠️ Built With</h2>
 <ul>
-  <li>React</li>
+  <li>Next js</li>
   <li>Framer Motion (animations)</li>
-  <li>CSS Flex/Grid for layout</li>
+  <li>CSS/Grid for layout</li>
   <li>Custom poker logic & hand evaluator</li>
 </ul>
